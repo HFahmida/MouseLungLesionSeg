@@ -1,0 +1,44 @@
+﻿# Python environments and caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Runtime outputs and logs
+outputs/
+logs/
+AI_prediction/
+AI_Prediction/
+*.npz
+*.pkl
+
+# Medical images and segmentation outputs
+*.nii
+*.nii.gz
+*.nrrd
+*.mha
+*.mhd
+
+# Trained weights and large model archives
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Ignore every downloaded/extracted model artifact. Keep only the small
+# instruction file that creates the models directory in a fresh clone.
+models/**
+!models/README.md
+
+# Local Zenodo staging area must never be committed.
+zenodo_assets/
