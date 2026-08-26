@@ -1,4 +1,6 @@
 nnunetv2
 numpy
 SimpleITK
-
+pandas
+openpyxl
+connected-components-3d

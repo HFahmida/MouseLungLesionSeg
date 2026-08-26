@@ -1,6 +1,8 @@
-# nnU-Net model-folder structure
+# Published nnU-Net model-folder structure
 
-The Zenodo staging area contains three self-contained model folders modeled on the `Ovary-Cyst_AI_model` package. Each folder has the nnU-Net environment directories and an inference script at its root:
+The [Zenodo record](https://zenodo.org/records/22050734) distributes three self-contained nnU-Net model packages. Each package has its own nnU-Net environment directories and an inference script at the package root.
+
+## Common package layout
 
 ```text
 MODEL_PACKAGE/
@@ -19,59 +21,111 @@ MODEL_PACKAGE/
             |-- dataset_fingerprint.json
             |-- plans.json
             `-- fold_NAME/
-                |-- checkpoint_final.pth
-                |-- debug.json
-                `-- progress.png
+                `-- checkpoint_final.pth
 ```
 
-The three staged packages are:
+The published packages retain the metadata needed by nnU-Net and distribute `checkpoint_final.pth` for each released fold.
+
+## Extracted layout under this repository
+
+After downloading and extracting the Zenodo files, the package roots must sit directly under `models/`.
 
 ```text
-zenodo_assets/model_folders/
+models/
+|-- README.md
 |-- mouse_lung_model/
-|   `-- nnUNet_results/Dataset101_mice_final/
-|       `-- nnUNetTrainer__nnUNetPlans__3d_fullres/fold_all/
+|   |-- inference_nnUNet.sh
+|   |-- inference_nnUNet_original.sh
+|   |-- nnUNet_raw/
+|   |   `-- Dataset101_mice_final/
+|   |       |-- dataset.json
+|   |       |-- imagesTe/
+|   |       `-- labelsTe/
+|   |-- nnUNet_preprocessed/
+|   `-- nnUNet_results/
+|       `-- Dataset101_mice_final/
+|           `-- nnUNetTrainer__nnUNetPlans__3d_fullres/
+|               |-- dataset.json
+|               |-- dataset_fingerprint.json
+|               |-- plans.json
+|               `-- fold_all/
+|                   `-- checkpoint_final.pth
 |-- mouse_lung_lesion_resenc_fold_all/
-|   `-- nnUNet_results/Dataset101_MRI-Lung/
-|       `-- nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres/fold_all/
+|   |-- inference_nnUNet.sh
+|   |-- inference_nnUNet_original.sh
+|   |-- nnUNet_raw/
+|   |   `-- Dataset101_MRI-Lung/
+|   |       |-- dataset.json
+|   |       |-- imagesTe/
+|   |       `-- labelsTe/
+|   |-- nnUNet_preprocessed/
+|   `-- nnUNet_results/
+|       `-- Dataset101_MRI-Lung/
+|           `-- nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres/
+|               |-- dataset.json
+|               |-- dataset_fingerprint.json
+|               |-- plans.json
+|               `-- fold_all/
+|                   `-- checkpoint_final.pth
 `-- mouse_lung_lesion_5fold/
-    `-- nnUNet_results/Dataset103_MRI-Lung/
-        `-- nnUNetTrainer__nnUNetPlans__3d_fullres/
-            |-- fold_0/
-            |-- fold_1/
-            |-- fold_2/
-            |-- fold_3/
-            `-- fold_4/
+    |-- inference_nnUNet.sh
+    |-- inference_nnUNet_original.sh
+    |-- nnUNet_raw/
+    |   `-- Dataset103_MRI-Lung/
+    |       |-- dataset.json
+    |       |-- imagesTe/
+    |       `-- labelsTe/
+    |-- nnUNet_preprocessed/
+    `-- nnUNet_results/
+        `-- Dataset103_MRI-Lung/
+            `-- nnUNetTrainer__nnUNetPlans__3d_fullres/
+                |-- dataset.json
+                |-- dataset_fingerprint.json
+                |-- plans.json
+                |-- fold_0/
+                |   `-- checkpoint_final.pth
+                |-- fold_1/
+                |   `-- checkpoint_final.pth
+                |-- fold_2/
+                |   `-- checkpoint_final.pth
+                |-- fold_3/
+                |   `-- checkpoint_final.pth
+                `-- fold_4/
+                    `-- checkpoint_final.pth
 ```
 
-Only `checkpoint_final.pth` is distributed, matching the nnU-Net inference default selected for this release.
+Do not create an additional `models/models/` directory. The commands in the main README assume the three package roots shown above.
 
-## Run a model folder
+## Package provenance
 
-Install nnU-Net, activate the environment, put single-channel inputs named `CASE_0000.nii.gz` into the package's `nnUNet_raw/.../imagesTe/` directory, and submit:
+| Package | Dataset | Trainer | Plans | Configuration | Folds |
+|---|---|---|---|---|---|
+| `mouse_lung_model` | `Dataset101_mice_final` | `nnUNetTrainer` | `nnUNetPlans` | `3d_fullres` | `all` |
+| `mouse_lung_lesion_resenc_fold_all` | `Dataset101_MRI-Lung` | `nnUNetTrainer` | `nnUNetResEncUNetMPlans` | `3d_fullres` | `all` |
+| `mouse_lung_lesion_5fold` | `Dataset103_MRI-Lung` | `nnUNetTrainer` | `nnUNetPlans` | `3d_fullres` | `0, 1, 2, 3, 4` |
 
-```bash
-cd /path/to/MODEL_PACKAGE
-sbatch inference_nnUNet.sh
-```
+## Run a package
 
-For a non-SLURM run:
-
-```bash
-cd /path/to/MODEL_PACKAGE
-bash inference_nnUNet.sh
-```
-
-You may override the default paths and device:
+Provide an input directory containing single-channel NIfTI images named `CASE_0000.nii.gz`.
 
 ```bash
 INPUT_DIR=/path/to/imagesTs \
 OUTPUT_DIR=/path/to/predictions \
 DEVICE=cuda \
-bash inference_nnUNet.sh
+bash /path/to/MODEL_PACKAGE/inference_nnUNet.sh
 ```
 
-The package-local script computes all three nnU-Net environment paths from its own location. `inference_nnUNet_original.sh` is retained only as a record of the original cluster command and contains NIH-specific paths; use `inference_nnUNet.sh` for the distributable package.
+On a SLURM cluster:
 
-The previously generated individual ZIP archives follow the official `nnUNetv2_export_model_to_zip` layout for `nnUNetv2_install_pretrained_model_from_zip`. The new `model_folders/` hierarchy is the manual, self-contained layout requested for Zenodo and matches the structure of the ovary reference package.
+```bash
+INPUT_DIR=/path/to/imagesTs \
+OUTPUT_DIR=/path/to/predictions \
+DEVICE=cuda \
+sbatch --export=ALL /path/to/MODEL_PACKAGE/inference_nnUNet.sh
+```
 
+The package-local script computes `nnUNet_raw`, `nnUNet_preprocessed`, and `nnUNet_results` from its own location. `inference_nnUNet_original.sh` is retained only as a record of the original cluster command and may contain site-specific paths. Use `inference_nnUNet.sh` for the distributable package.
+
+## Zenodo filenames and checksums
+
+The exact uploaded archive names and checksums are controlled by the published Zenodo record. The main [`README.md`](README.md) includes a Python command that reads the record API and prints the current exact filename, checksum, and size for every uploaded file.
