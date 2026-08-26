@@ -1,0 +1,86 @@
+Title: MouseLungLesionSeg v1.0: A Two-Staged AI Approach for Lung Lesion Segmentation on MRI for Mice Tumor Models
+
+URL Source: https://zenodo.org/records/22050734
+
+Markdown Content:
+Published August 21, 2026  | Version V1
+
+*    1. [![Image 1: ROR icon](https://zenodo.org/static/images/ror-icon.svg)](https://ror.org/040gcmg81 "National Cancer Institute's ROR profile") National Cancer Institute 
+*    2. European University of Bangladesh 
+*    3. National Cancer Institute, NIH 
+
+## Description
+
+### Description
+
+This record provides trained nnU-Net v2 model weights for automated segmentation of mouse lungs and lung lesions in T2-weighted (T2W) magnetic resonance images. It also includes representative, de-identified sample MRI volumes with corresponding reference ground-truth annotations and AI-generated predictions for demonstrating and evaluating the inference workflow.
+
+The pipeline contains two independently trained 3D full-resolution nnU-Net models:
+
+1.   A lung-segmentation model that identifies the mouse lung region.
+2.   A lung-lesion segmentation model that identifies suspected lesions from the same input MRI.
+
+The two predictions are subsequently merged. Predicted lesion voxels are retained only when they occur within the predicted lung mask. The resulting combined segmentation uses the following label convention:
+
+*   `0`: Background
+*   `1`: Lung without predicted lesion
+*   `2`: Predicted lesion within the predicted lung
+
+Each input is a single-channel T2W MRI volume in compressed NIfTI format (`.nii.gz`) and follows the nnU-Net naming convention `CASE_IDENTIFIER_0000.nii.gz`. The model archive includes the final trained checkpoints and the nnU-Net metadata required for inference, including `dataset.json`, `dataset_fingerprint.json`, and `plans.json`.
+
+The sample-data package contains, as applicable:
+
+*   T2W mouse MRI volumes
+*   Reference ground-truth lung and lesion annotations
+*   AI-generated lung predictions
+*   AI-generated lesion predictions
+*   Combined three-label AI segmentations
+*   Visual comparisons of the reference and AI annotations
+
+Ground-truth annotations and AI-generated annotations are stored separately and clearly identified. The AI outputs are provided to demonstrate model behavior and reproducibility; they must not be interpreted as additional ground truth.
+
+The associated GitHub repository provides installation instructions, inference scripts, prediction-merging utilities, and tumor-burden analysis tools: [GitHub](https://github.com/HFahmida/MouseLungLesionSeg.git)
+
+#### Model provenance
+
+*   Framework: nnU-Net v2
+*   Configuration: `3d_fullres`
+*   Trainer/plans: `nnUNetTrainer__nnUNetPlans__3d_fullres`
+*   Training fold: `all`
+*   Checkpoint: `checkpoint_final.pth`
+*   Lung model dataset identifier: `Dataset101_mice_final`
+*   Lung-lesion model dataset identifier: `Dataset101_MRI-Lung`
+*   Recommended Python version: Python 3.10 or newer
+*   Recommended inference device: CUDA-compatible GPU; CPU inference is also supported
+
+The original lung-model metadata names input channel 0 as `CT` and specifies `CTNormalization`. These original training metadata are retained because nnU-Net uses the saved plans during inference. However, the public pipeline input is a single T2-weighted MRI volume named according to the `*_0000.nii.gz` convention.
+
+#### Research-use disclaimer
+
+This software and the accompanying models are provided for research use only. They are not medical devices and have not been validated or approved for clinical diagnosis, treatment planning, or patient-care decisions.
+
+If you use these models, please cite this Zenodo record, the associated GitHub repository, the related publication **[COMING SOON]**, and the nnU-Net framework.
+
+### Files
+
+#### Restricted
+
+The record is publicly accessible, but files are restricted. [Log in](https://zenodo.org/login/?next=/records/22050734) to check if you have access.
+
+## Additional details
+
+Citations[](https://support.zenodo.org/help/en-gb/25-citations)
+
+literature (0)
+
+dataset (0)
+
+software (0)
+
+unknown (0)
+
+Citations to this version
+
+Search citations
+
+_No citations found_
