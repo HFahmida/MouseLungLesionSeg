@@ -1,4 +1,6 @@
-﻿# Mouse T2W MRI Lung Lesion Segmentation
+# Mouse T2W MRI Lung Lesion Segmentation
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22050734.svg)](https://doi.org/10.5281/zenodo.22050734)
 
 A two-stage nnU-Net v2 pipeline for segmenting the lungs and lung lesions in mouse T2-weighted (T2W) MRI.
 
@@ -65,9 +67,10 @@ See the official [nnU-Net installation guide](https://github.com/MIC-DKFZ/nnUNet
 
 ## Download the trained models from Zenodo
 
-The trained model files are not stored in GitHub because the checkpoints are too large. Download the model archive from Zenodo:
+The trained model files are not stored in GitHub because the checkpoints are too large. Download the model archive from the Zenodo record:
 
-> **Zenodo download:** `TODO: add the Zenodo record or direct models.zip URL`
+> **Zenodo record:** [https://zenodo.org/records/22050734](https://zenodo.org/records/22050734)  
+> **DOI:** [10.5281/zenodo.22050734](https://doi.org/10.5281/zenodo.22050734)
 
 The intended archive name is `models.zip`. Extract its contents directly into this repository's existing `models/` directory.
 
@@ -202,7 +205,6 @@ The original lung-model nnU-Net metadata names channel 0 `CT`, stores the intern
 
 ## Before making the repository public
 
-- Replace the Zenodo placeholder with the model-record URL or DOI.
 - Replace `YOUR-GITHUB-USERNAME` with the GitHub account or organization that owns `MouseLungLesionSeg`.
 - Complete `CITATION.cff` with the author list, repository URL, DOI, and publication.
 - Replace the placeholder `LICENSE` with the approved software and model license.
@@ -211,5 +213,4 @@ The original lung-model nnU-Net metadata names channel 0 `CT`, stores the intern
 
 ## Citation
 
-If you use this pipeline, please cite this repository, the Zenodo model record, the associated publication, and [nnU-Net](https://github.com/MIC-DKFZ/nnUNet).
-
+If you use this pipeline, please cite this repository, the [Zenodo model record](https://zenodo.org/records/22050734) with DOI [`10.5281/zenodo.22050734`](https://doi.org/10.5281/zenodo.22050734), the associated publication, and [nnU-Net](https://github.com/MIC-DKFZ/nnUNet).
