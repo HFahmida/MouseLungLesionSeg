@@ -64,47 +64,72 @@ On Windows PowerShell, activate the environment with:
 
 See the official [nnU-Net installation guide](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/getting-started/installation-and-setup.md) and [inference guide](https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/how-to/run-inference.md).
 
-## Download the trained models from Zenodo
+## Access the trained models on Zenodo
 
-The trained model files are hosted on Zenodo because the checkpoints are too large for GitHub.
+The trained model files are hosted on Zenodo because the checkpoints are too large for GitHub. The published V1 record is titled **MouseLungLesionSeg v1.0: A Two-Staged AI Approach for Lung Lesion Segmentation on MRI for Mice Tumor Models**.
 
-> **Zenodo record:** [https://zenodo.org/records/22050734](https://zenodo.org/records/22050734)  
-> **DOI:** [10.5281/zenodo.22050734](https://doi.org/10.5281/zenodo.22050734)
+> **Version-specific record:** [https://zenodo.org/records/22050734](https://zenodo.org/records/22050734)  
+> **Version-specific DOI:** [10.5281/zenodo.22050734](https://doi.org/10.5281/zenodo.22050734)  
+> **Concept DOI:** [10.5281/zenodo.22050733](https://doi.org/10.5281/zenodo.22050733)  
+> **Published:** August 21, 2026  
+> **File access:** Restricted  
+> **Model license:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
-Download the model archive or archives listed under **Files** in the Zenodo record. Zenodo is the authoritative source for the current filenames, file sizes, and checksums.
+The record metadata are public, but the uploaded files are restricted. Open the Zenodo record while signed in to request or use granted access. The record owner can also share access with a Zenodo user or provide a secret viewing link.
 
-### Print the exact Zenodo filenames and checksums
+### Retrieve the exact Zenodo filenames and checksums
 
-The following command reads the published record metadata and prints each exact filename, checksum, and size. It supports both the legacy and current Zenodo file-metadata layouts.
+Because the files are restricted, an unauthenticated API response does not expose their filenames or checksums. After access has been granted, the following command queries the dedicated Zenodo files endpoint and prints every exact filename, checksum, and file size. Set `ZENODO_ACCESS_TOKEN` to a personal token that has access to the record. Do not commit or share the token.
 
 ```bash
+export ZENODO_ACCESS_TOKEN="replace-with-your-private-token"
+
 python - <<'PY'
 import json
+import os
 import urllib.request
 
-# Read the public Zenodo record without requiring an access token.
-record_url = "https://zenodo.org/api/records/22050734"
-with urllib.request.urlopen(record_url) as response:
-    record = json.load(response)
+# Read the restricted file inventory using an authorized Zenodo token.
+record_id = "22050734"
+token = os.environ.get("ZENODO_ACCESS_TOKEN")
+if not token:
+    raise SystemExit("Set ZENODO_ACCESS_TOKEN before running this command.")
 
-# Zenodo installations may represent files as a list or as an entries mapping.
-files = record.get("files", [])
-if isinstance(files, dict):
-    entries = files.get("entries", files)
-    if isinstance(entries, dict):
-        files = [dict(value, key=value.get("key", key)) for key, value in entries.items()]
-    else:
-        files = entries
+request = urllib.request.Request(
+    f"https://zenodo.org/api/records/{record_id}/files",
+    headers={
+        "Accept": "application/json",
+        "Authorization": f"Bearer {token}",
+        "User-Agent": "MouseLungLesionSeg/1.0",
+    },
+)
+with urllib.request.urlopen(request, timeout=60) as response:
+    payload = json.load(response)
+
+# Current Zenodo records generally return an `entries` mapping. The fallback
+# keeps the command compatible with list-based responses.
+entries = payload.get("entries", payload.get("files", payload))
+if isinstance(entries, dict):
+    files = [dict(value, key=value.get("key", key)) for key, value in entries.items()]
+elif isinstance(entries, list):
+    files = entries
+else:
+    raise SystemExit("Zenodo returned an unexpected file-metadata format.")
+
+if not files:
+    raise SystemExit("No files were returned. Confirm that the token can view this restricted record.")
 
 for item in files:
-    filename = item.get("key") or item.get("id") or "unknown"
+    filename = item.get("key") or item.get("filename") or item.get("id") or "unknown"
     checksum = item.get("checksum", "not provided")
     if isinstance(checksum, dict):
         checksum = checksum.get("md5") or checksum.get("sha256") or str(checksum)
-    size = item.get("size", "not provided")
+    size = item.get("size", item.get("filesize", "not provided"))
     print(f"{filename}\t{checksum}\t{size} bytes")
 PY
 ```
+
+You can also copy the exact filenames and checksums from the **Files** section after opening the record with authorized access.
 
 To verify a downloaded file against the MD5 value reported by Zenodo:
 
@@ -289,10 +314,10 @@ The original lung-model nnU-Net metadata names channel 0 `CT`, stores the intern
 
 The source code and documentation in this GitHub repository are licensed under the [MIT License](LICENSE).
 
-The trained model files are distributed separately through Zenodo and remain subject to the license terms displayed on the [Zenodo record](https://zenodo.org/records/22050734). The GitHub repository license does not replace the terms attached to the Zenodo files or third-party dependencies.
+The trained model files in Zenodo record `22050734` are licensed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) and have restricted file access. The GitHub MIT license does not replace the model license, Zenodo access conditions, or licenses of third-party dependencies.
 
 ## Citation
 
 The associated paper has not yet been published. `CITATION.cff` is intentionally retained as a placeholder and will be completed after publication.
 
-Until then, please cite the [Zenodo model record](https://zenodo.org/records/22050734) using DOI [`10.5281/zenodo.22050734`](https://doi.org/10.5281/zenodo.22050734), this GitHub repository, and [nnU-Net](https://github.com/MIC-DKFZ/nnUNet).
+Until then, please cite the [Zenodo model record](https://zenodo.org/records/22050734) using the version-specific DOI [`10.5281/zenodo.22050734`](https://doi.org/10.5281/zenodo.22050734), this GitHub repository, and [nnU-Net](https://github.com/MIC-DKFZ/nnUNet). Use the concept DOI [`10.5281/zenodo.22050733`](https://doi.org/10.5281/zenodo.22050733) when referring to the model collection across versions.

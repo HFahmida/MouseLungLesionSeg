@@ -1,6 +1,6 @@
 # Published nnU-Net model-folder structure
 
-The [Zenodo record](https://zenodo.org/records/22050734) distributes three self-contained nnU-Net model packages. Each package has its own nnU-Net environment directories and an inference script at the package root.
+The restricted-access [Zenodo V1 record](https://zenodo.org/records/22050734) contains the model release represented by three self-contained nnU-Net package directories. Each package has its own nnU-Net environment directories and an inference script at the package root.
 
 ## Common package layout
 
@@ -128,4 +128,4 @@ The package-local script computes `nnUNet_raw`, `nnUNet_preprocessed`, and `nnUN
 
 ## Zenodo filenames and checksums
 
-The exact uploaded archive names and checksums are controlled by the published Zenodo record. The main [`README.md`](README.md) includes a Python command that reads the record API and prints the current exact filename, checksum, and size for every uploaded file.
+The exact uploaded archive names and checksums are protected by the Zenodo record's restricted file access and are not returned by the unauthenticated public API. The main [`README.md`](README.md) includes an authorized Python command that retrieves the current exact filename, checksum, and size for every file after access is granted.
